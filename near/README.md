@@ -38,14 +38,21 @@ Agents default to reusable private pool balances: check and top up before negoti
 
 ## Current completion boundary
 
-Phases 4–6 are complete in code and local integration. `PHASES_4_6_TRACEABILITY.md` maps every roadmap item and exit criterion to source and test evidence. `PHASE_8_TRACEABILITY.md` maps seven completed local security tasks; the real Explorer inspection remains open until Phase 9 creates testnet transactions.
+Phases 1–6 are complete in code and local integration.
+`PHASES_4_6_TRACEABILITY.md` maps every Phase 4–6 roadmap item and exit criterion to
+source and test evidence. Phase 8 is 8/8 complete with local, live Phala TDX, and
+NEAR testnet evidence; `PHASE_8_TRACEABILITY.md` contains the comparison.
 
-Phase 7 is deliberately open. It is complete only after two independent agents use separate wallets and MCP tokens to finish the full deal flow through the hosted application, deployed testnet pool, and verified confidential worker. Live accounts, hosting, CVM verification, Explorer evidence, and the judge demonstration belong to Phase 9.
+Phase 7 is deliberately open. It is complete only after two independent agents use
+separate wallets and MCP tokens to finish the full deal flow through the publicly
+hosted application. The same flow already passed with two independent MCP processes,
+the locally run API/MCP boundary, the deployed NEAR testnet pool, and the verified
+Phala confidential worker.
 
-The non-hosted Phase 9 package is prepared under `deployment/` and `scripts/`. The
-testnet pool address and paused bootstrap transactions are recorded in
-`deployment/TESTNET_STATE.md`; the pool stays paused until a verified hosted TEE
-identity is rotated in.
-`PHASE_9_PREDEPLOYMENT_TRACEABILITY.md` maps each remaining live requirement to its
-deployment command, verification step, and evidence file. No frontend files were
-changed as part of that preparation.
+The NEAR contract and Phala worker are live and cryptographically bound. The pool is
+unpaused, the worker key is restricted to two contract methods, the public-repository
+CI image build is green, and Explorer privacy checks passed across the real
+transactions. `deployment/TESTNET_STATE.md`, `deployment/PHALA_TEE_STATE.md`, and
+`PHASE_9_PREDEPLOYMENT_TRACEABILITY.md` record the addresses, measurements,
+transactions, verification commands, and remaining hosting work. No frontend files
+were changed as part of Phase 9.

@@ -8,6 +8,7 @@ yet claim the remaining service hosting or the hosted two-agent end-to-end run.
 | --- | --- | --- |
 | Deploy contract to NEAR testnet | Guarded `deploy-contract.mjs`, balance/key/code checks, initialization config, evidence output | **Complete**; deployed, initialized, verified worker registered, and unpaused on testnet |
 | Deploy worker and verify attestation | Production Phala dstack CVM, digest-pinned GHCR image, fresh worker/platform Intel TDX quotes, official verifier results, RTMR replay, compose/image/identity cross-check | **Complete**; live endpoint and public evidence recorded |
+| Publish reproducible worker image from the public repository | GitHub Actions verifies the worker, builds `linux/amd64`, and publishes commit and `testnet` tags with `packages: write` | **Complete**; run `40171838109` published immutable digest `sha256:60e57b5c19ad23ff14e594026e6eccec804b65db199cfa8ad5a0aaed400da18c` |
 | Provision exact worker key | Key injected through encrypted CVM environment; guarded lockdown left one function-call key for the exact pool and two methods | **Complete**; no FullAccess or additional worker key remains |
 | Verify scheduled timeouts and batched roots | Automatic timeout tests plus live Phala maintenance; Explorer audit found eight root anchors and final sequence 11 | **Complete** |
 | Register approved TEE identity | Verified worker proposal, delayed activation, exact on-chain hash checks, and unpause | **Complete** on NEAR testnet |
@@ -72,6 +73,11 @@ yet claim the remaining service hosting or the hosted two-agent end-to-end run.
 - The Explorer audit decoded 13 real transactions: two deposits, eight roots, and
   three withdrawals. No private deal field appeared in function arguments, events,
   or public configuration.
+- The public-repository GitHub Actions workflow completed successfully and
+  published an immutable worker image from commit
+  `9f9f8d7f7bbdc46b27bc9a1523632058dcf72a1c`. The running CVM remains pinned to its
+  already attested image; deploying the new CI digest requires a fresh attestation
+  and delayed on-chain identity rotation.
 
 ## Verification performed on 2026-10-24
 
@@ -83,14 +89,14 @@ yet claim the remaining service hosting or the hosted two-agent end-to-end run.
   confirmed zero pool liability, and found no forbidden private deal fields in the
   public configuration.
 
-- Phase 9 preflight passed with 28 required artifacts and 15 script syntax checks.
-- The source secret scanner inspected 1,041 tracked/untracked non-ignored files and
+- Phase 9 preflight passed with 32 required artifacts and 17 script syntax checks.
+- The source secret scanner inspected 1,051 tracked/untracked non-ignored files and
   found zero private keys, MCP tokens, PEM keys, unsafe secret files, or populated
   secret environment values.
 - Type checks passed for shared types, worker, privacy API, MCP, and integration
   packages.
-- 88 backend and cross-service TypeScript tests passed: shared types 13, worker 38,
-  privacy API 5, MCP 31, and cross-service integration 1.
+- 91 TypeScript tests passed: shared types 13, worker 38, privacy API 5, MCP 31,
+  browser 3, and cross-service integration 1.
 - The demo API returned 200 for the delivered credential, 401 for an invalid
   credential, and 200 for health without logging the credential.
 - Agent/deposit secret helpers created mode-600 files and did not print their secret

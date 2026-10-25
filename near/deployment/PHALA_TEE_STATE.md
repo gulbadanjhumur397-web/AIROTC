@@ -82,6 +82,19 @@ pnpm phase9:inspect
 
 No private key or plaintext deal data is required to verify the public TEE binding.
 
+## Public CI image
+
+The public `near-testnet-hackathon` branch independently rebuilt and published the
+worker from commit `9f9f8d7f7bbdc46b27bc9a1523632058dcf72a1c` in GitHub Actions run
+`40171838109`:
+
+`ghcr.io/gulbadanjhumur397-web/airotc-tee-worker@sha256:60e57b5c19ad23ff14e594026e6eccec804b65db199cfa8ad5a0aaed400da18c`
+
+That CI image is a reproducible public build artifact. The live CVM intentionally
+continues to use the separately attested digest in the deployment identity table.
+Replacing the live image would change the measured compose identity and requires a
+fresh quote verification plus the contract's delayed worker-identity rotation.
+
 The later integration run produced eight public `anchor_ledger_root` transactions,
 ending at sequence `11` and root
 `b7c6e34d855740d2eedff3df09302224fc0c1325683aa5df98cc5508a8db66ac`.
