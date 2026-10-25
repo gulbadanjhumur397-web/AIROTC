@@ -49,6 +49,11 @@ prisma/*.db-journal
 coverage/
 .turbo/
 *.tgz
+.cargo/
+.rustup/
+.native/
+near/evidence/
+near/.secrets/
 
 # ElizaOS demo agents
 agents/elizaos-agent/.env

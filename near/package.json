@@ -1,0 +1,24 @@
+{
+  "name": "@air-otc/near",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --filter @air-otc/shared-types build && pnpm --filter @air-otc/tee-worker build && pnpm --filter @air-otc/privacy-api build && pnpm --filter @air-otc/near-mcp-server build && pnpm --filter @air-otc/near-web build",
+    "typecheck": "pnpm --filter @air-otc/shared-types typecheck && pnpm --filter @air-otc/shared-types build && pnpm --filter @air-otc/tee-worker typecheck && pnpm --filter @air-otc/privacy-api typecheck && pnpm --filter @air-otc/near-mcp-server typecheck && pnpm --filter @air-otc/near-web typecheck && pnpm --filter @air-otc/integration-tests typecheck",
+    "test": "pnpm --filter @air-otc/shared-types test && pnpm --filter @air-otc/tee-worker test && pnpm --filter @air-otc/privacy-api test && pnpm --filter @air-otc/near-mcp-server test && pnpm --filter @air-otc/near-web test && pnpm --filter @air-otc/integration-tests test",
+    "test:phase8": "pnpm typecheck && pnpm test && node scripts/phase8-static-scan.mjs",
+    "test:contract:sandbox": "pnpm --filter @air-otc/near-escrow-contract test:sandbox",
+    "phase9:preflight": "node scripts/phase9-preflight.mjs",
+    "phase9:wallets": "node scripts/bootstrap-testnet-wallets.mjs",
+    "phase9:prepare-env": "node scripts/prepare-testnet-environment.mjs",
+    "phase9:secrets": "node scripts/check-secrets.mjs",
+    "phase9:inspect": "node scripts/inspect-testnet.mjs",
+    "phase9:verify-txs": "node scripts/verify-deployment-transactions.mjs",
+    "phase9:register-tee": "node scripts/register-hosted-tee.mjs",
+    "phase9:demo": "node scripts/two-agent-demo.mjs"
+  },
+  "dependencies": {
+    "near-api-js": "7.3.1"
+  },
+  "packageManager": "pnpm@10.18.3"
+}

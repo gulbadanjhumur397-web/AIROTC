@@ -1,0 +1,12 @@
+packages:
+  - shared-types
+  - tee-worker
+  - escrow-contract
+  - privacy-api
+  - mcp-server
+  - web
+  - integration-tests
+
+allowBuilds:
+  near-sandbox: true
+  secp256k1: true

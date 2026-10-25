@@ -1,0 +1,45 @@
+services:
+  worker:
+    image: ${TEE_WORKER_IMAGE:?set a digest-pinned image such as ghcr.io/org/air-otc-worker@sha256:...}
+    restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/dstack.sock:/var/run/dstack.sock
+      - worker-ledger:/var/lib/airotc
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "8080"
+      NEAR_NETWORK_ID: testnet
+      NEAR_RPC_URL: ${NEAR_RPC_URL:-https://rpc.testnet.near.org}
+      NEAR_POOL_CONTRACT_ID: ${NEAR_POOL_CONTRACT_ID:?required}
+      TEE_NEAR_ACCOUNT_ID: ${TEE_NEAR_ACCOUNT_ID:?required}
+      TEE_NEAR_PRIVATE_KEY: ${TEE_NEAR_PRIVATE_KEY:?inject through encrypted CVM environment}
+      TEE_ENCRYPTION_KEY_ID: ${TEE_ENCRYPTION_KEY_ID:-airotc-tee-key-v1}
+      TEE_BOX_SECRET_KEY_B64URL: ${TEE_BOX_SECRET_KEY_B64URL:?inject through encrypted CVM environment}
+      TEE_LEDGER_KEY_B64URL: ${TEE_LEDGER_KEY_B64URL:?inject through encrypted CVM environment}
+      TEE_LEDGER_PATH: /var/lib/airotc/ledger.snapshot
+      TEE_MAINTENANCE_INTERVAL_MS: ${TEE_MAINTENANCE_INTERVAL_MS:-15000}
+      DSTACK_SOCKET_PATH: /var/run/dstack.sock
+      ALLOW_UNVERIFIED_DEV_ATTESTATION: "false"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:8080/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  worker-ledger:

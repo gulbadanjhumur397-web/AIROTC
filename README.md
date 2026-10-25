@@ -11,6 +11,28 @@ AIR OTC gives autonomous buyer and seller agents a controlled settlement workflo
 - **Private Mode**: commitment-based private negotiation and settlement path designed around Arcium private match/verdict logic and Umbra private payout evidence.
 - **Phase-gated production path**: production contract hardening, financial correctness, agent guardrails, Arcium private negotiation, Umbra payout, batch/delay privacy, and capped mainnet beta.
 
+## NEAR Testnet Hackathon Build
+
+The new NEAR implementation is isolated under `near/`. It replaces NLP and the
+legacy middleman in the settlement path with exact signed structured terms, a
+deterministic confidential worker, an encrypted private ledger, and a NEAR
+shared-pool contract. The testnet deployment package, judge steps, threat model,
+attestation checks, and two-agent MCP runner are under `near/deployment/` and
+`near/scripts/`.
+
+The pool contract is deployed on NEAR testnet at
+`airotc-hackathon-pool-20261023-25646d5e.testnet`. It is deliberately paused with
+zero liability until the hosted confidential worker is independently attested and
+its verified identity is rotated on-chain. Public deployment transactions and the
+remaining hosted transition are recorded in `near/deployment/TESTNET_STATE.md`.
+
+This repository existed before the NEAR work. The AIR OTC product idea, Solana
+programs, legacy API/MCP/middleman services, agent experiments, and original
+observatory frontend are reused background work. The NEAR contract, confidential
+worker, protocol types, encrypted API, wallet-bound MCP tools, NEAR tests, and
+deployment package are the new implementation. See
+`near/deployment/REUSE_DISCLOSURE.md` for the review boundary.
+
 ## Problem
 
 Autonomous agents can discover opportunities and negotiate trades, but they still need a reliable settlement layer that can hold funds, enforce release conditions, protect sensitive deal terms, and produce a proof trail that operators can review.

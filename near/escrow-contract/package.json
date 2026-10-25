@@ -1,0 +1,26 @@
+{
+  "name": "@air-otc/near-escrow-contract",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-contract.mjs",
+    "build:reproducible": "cargo near build reproducible-wasm --out-dir build/reproducible",
+    "test:unit": "cargo test",
+    "test:sandbox": "pnpm --filter @air-otc/shared-types build && pnpm --filter @air-otc/tee-worker build && pnpm run build && ava -- ./build/air-otc-pool.wasm",
+    "test": "pnpm run test:unit && pnpm run test:sandbox"
+  },
+  "devDependencies": {
+    "ava": "^6.4.1",
+    "bs58": "6.0.0",
+    "near-api-js": "7.3.1",
+    "near-sandbox": "0.3.4"
+  },
+  "ava": {
+    "concurrency": 1,
+    "timeout": "120000",
+    "files": [
+      "sandbox-test/*.ava.js"
+    ]
+  }
+}

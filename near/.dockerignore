@@ -1,0 +1,13 @@
+.git
+.gitignore
+**/node_modules
+**/dist
+**/target
+**/build
+**/.env
+**/.env.*
+**/*.snapshot
+**/*.key
+**/*.pem
+**/coverage
+**/.DS_Store
