@@ -12,17 +12,21 @@ Phases 4–6 were completed at the code and local-integration level on 2026-10-2
 
 Phase 7 may only be completed from hosted evidence: two separate agent processes, wallets, and MCP tokens; real testnet transaction references; verified NEAR confidential-compute evidence; and no direct database access.
 
-Phase 8 currently has 7/8 roadmap tasks completed. The verified local result is
-105 tests passing (91 TypeScript/integration, 12 Rust unit, 2 NEAR sandbox),
-strict Rust formatting/linting, successful application and WASM builds, and a
-clean static privacy scan. The remaining task is inspection of actual NEAR
-Explorer transactions created after Phase 9 deployment.
+Phase 8 is complete: all 8/8 roadmap tasks have mapped evidence. In addition to
+the 105-test local result, the live audit inspected 13 real NEAR testnet
+transactions from the deployed worker flow: two deposits, eight batched ledger-root
+anchors, and three withdrawals. It found no ticket, deal, terms, price, collateral,
+delivery, product, credential, or private-balance field on chain.
 
 Phase 9 progress is recorded in `near/PHASE_9_PREDEPLOYMENT_TRACEABILITY.md`. The
-testnet pool is deployed, initialized, and paused with an explicitly provisional
-identity. Hosting, live CVM attestation, worker-key lockdown, verified identity
-rotation/unpause, reusable deposits, final Explorer evidence, the hosted two-agent
-run, and video remain open.
+testnet pool and a production Phala Cloud dstack CVM are deployed. The Intel TDX
+quotes, event log, compose hash, image digest, nonce-bound worker identity, and
+restricted worker key were independently verified on 2026-10-25. The verified
+identity is registered and the pool is unpaused. Buyer and seller reusable deposits
+were claimed into private balances, and the real two-process MCP flow passed against
+Phala and NEAR testnet. Remaining service hosting, new hosted MCP grants, the hosted
+two-agent rerun, and video remain open. The integration and live Explorer privacy
+inspection do not satisfy Phase 7 until the API and MCP boundary is publicly hosted.
 Do not modify either frontend unless the user explicitly requests frontend work.
 
 ## Non-negotiable architecture

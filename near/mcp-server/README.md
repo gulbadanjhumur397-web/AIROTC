@@ -18,6 +18,9 @@ Before encrypting any terms or private-ledger action, the MCP process reads the 
 
 Build with `pnpm --filter @air-otc/near-mcp-server build`, configure the placeholders in `.env.example` through a local secret manager, and launch `node dist/index.js`. Point an MCP client at that command and environment. Run a separate process, wallet, key set, and token for each buyer or seller agent.
 
+`PRIVACY_API_REQUEST_TIMEOUT_MS` defaults to 90 seconds so a tool call can outlive
+the privacy API's 60-second worker limit during a root anchor and NEAR withdrawal.
+
 The API enforces immutable token identity, scopes, roles, replay IDs, expiry, revocation, and cumulative/per-action withdrawal caps. The worker independently verifies the signed NEAR identity, nonces, expiry, exact terms, deal role, and the withdrawal amount commitment.
 
 ## Default agent funding flow

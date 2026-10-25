@@ -8,6 +8,7 @@ const requiredFiles = [
   "near/escrow-contract/build/air-otc-pool.wasm",
   "near/tee-worker/Dockerfile",
   "near/tee-worker/deployment/docker-compose.tee.yml",
+  "near/tee-worker/deployment/docker-compose.phala.yml",
   "near/deployment/testnet.env.example",
   "near/deployment/TESTNET_RUNBOOK.md",
   "near/deployment/JUDGE_REPRODUCTION.md",
@@ -16,6 +17,7 @@ const requiredFiles = [
   "near/deployment/REUSE_DISCLOSURE.md",
   "near/deployment/EVIDENCE_TEMPLATE.md",
   "near/deployment/TESTNET_STATE.md",
+  "near/deployment/PHALA_TEE_STATE.md",
   "near/deployment/agents/buyer.prompt.md",
   "near/deployment/agents/seller.prompt.md",
   "near/demo-api/server.mjs",
@@ -32,6 +34,8 @@ const requiredFiles = [
   "near/scripts/issue-mcp-token.mjs",
   "near/scripts/inspect-testnet.mjs",
   "near/scripts/verify-deployment-transactions.mjs",
+  "near/scripts/verify-phala-evidence.mjs",
+  "near/scripts/verify-live-privacy.mjs",
   "near/scripts/two-agent-demo.mjs",
 ];
 const missing = [];
@@ -69,5 +73,5 @@ process.stdout.write(`${JSON.stringify({
   requiredFiles: requiredFiles.length,
   scriptSyntaxChecks: requiredFiles.filter((path) => path.endsWith(".mjs")).length,
   secretsScan: "passed",
-  liveDeployment: "recorded-paused-bootstrap",
+  liveDeployment: "verified-phala-worker-registered-and-unpaused",
 }, null, 2)}\n`);

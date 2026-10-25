@@ -42,7 +42,14 @@ export interface WorkerProxy {
 }
 
 export class HttpWorkerProxy implements WorkerProxy {
-  constructor(private readonly baseUrl: string) {}
+  constructor(
+    private readonly baseUrl: string,
+    private readonly requestTimeoutMs = 60_000,
+  ) {
+    if (!Number.isInteger(requestTimeoutMs) || requestTimeoutMs < 1_000 || requestTimeoutMs > 300_000) {
+      throw new Error("Worker request timeout must be between 1000 and 300000 milliseconds");
+    }
+  }
 
   identity(): Promise<unknown> {
     return this.get("/v1/identity");
@@ -62,7 +69,7 @@ export class HttpWorkerProxy implements WorkerProxy {
   }
 
   private async get(path: string): Promise<unknown> {
-    const response = await fetch(`${this.baseUrl}${path}`, { signal: AbortSignal.timeout(15_000) });
+    const response = await fetch(`${this.baseUrl}${path}`, { signal: AbortSignal.timeout(this.requestTimeoutMs) });
     return responseJson(response);
   }
 
@@ -71,7 +78,7 @@ export class HttpWorkerProxy implements WorkerProxy {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(15_000),
+      signal: AbortSignal.timeout(this.requestTimeoutMs),
     });
     return responseJson(response);
   }

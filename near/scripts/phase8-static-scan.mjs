@@ -3,7 +3,7 @@ import path from "node:path";
 import process from "node:process";
 
 const root = path.resolve(new URL("..", import.meta.url).pathname);
-const ignored = new Set(["node_modules", "dist", "build", "target", ".git"]);
+const ignored = new Set(["node_modules", "dist", "build", "target", ".git", ".secrets", "evidence"]);
 const files = await walk(root);
 const failures = [];
 

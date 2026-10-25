@@ -12,6 +12,8 @@ Copy `.env.example` to a secret-managed runtime environment and set:
 - `PRIVACY_API_HANDLE_SECRET_B64URL`: at least 32 random bytes used only for opaque wallet handles.
 - `PRIVACY_API_DATABASE_PATH`: writable encrypted-state file.
 - `TEE_WORKER_URL`: confidential worker base URL.
+- `TEE_WORKER_REQUEST_TIMEOUT_MS`: worker request limit, 60 seconds by default so
+  a force-anchor plus NEAR withdrawal can finish without an HTTP timeout.
 - `NEAR_RPC_URL`: NEAR testnet RPC used to verify the key that signed each NEP-413 token grant.
 - `WEB_ORIGIN`: exact allowed browser origin.
 

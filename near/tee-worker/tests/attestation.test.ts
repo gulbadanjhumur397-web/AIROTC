@@ -16,22 +16,16 @@ describe("dstack attestation adapter", () => {
     expect(attestationReportData({ ...identity, encryptionKeyId: "tee-key-v2" }, "a".repeat(64))).not.toBe(first);
   });
 
-  it("requests current v1 info and attestation evidence from the guest socket", async () => {
+  it("requests current info and attestation evidence from the official dstack client", async () => {
     const reportData = attestationReportData(identity, "c".repeat(64));
-    const call = vi.fn(async (path: string, body: Record<string, unknown>) => {
-      if (path === "/v1/Info") {
-        return {
+    const info = vi.fn(async () => ({
           app_id: "11".repeat(20),
           instance_id: "22".repeat(20),
           compose_hash: "33".repeat(32),
           os_image_hash: "44".repeat(32),
-        };
-      }
-      expect(path).toBe("/v1/Attest");
-      expect(body).toMatchObject({ report_data: reportData, include_boottime_gpu_evidence: false });
-      return { attestation: "55".repeat(128) };
-    });
-    const provider = new DstackAttestationProvider("/unused-in-test", call);
+    }));
+    const attest = vi.fn(async () => ({ attestation: "55".repeat(128) }));
+    const provider = new DstackAttestationProvider("/unused-in-test", { info, attest });
     await expect(provider.getEvidence(reportData)).resolves.toMatchObject({
       platform: "DSTACK_CVM",
       reportData,
@@ -39,15 +33,20 @@ describe("dstack attestation adapter", () => {
       osImageHash: "44".repeat(32),
       attestationHex: "55".repeat(128),
     });
-    expect(call).toHaveBeenCalledTimes(2);
+    expect(info).toHaveBeenCalledTimes(1);
+    expect(attest).toHaveBeenCalledWith(Buffer.from(reportData, "hex"));
   });
 
   it("rejects malformed platform identity fields", async () => {
-    const provider = new DstackAttestationProvider("/unused-in-test", async (path) =>
-      path === "/v1/Info"
-        ? { app_id: "invalid", instance_id: "22", compose_hash: "33".repeat(32), os_image_hash: "44".repeat(32) }
-        : { attestation: "55" },
-    );
+    const provider = new DstackAttestationProvider("/unused-in-test", {
+      info: async () => ({
+        app_id: "invalid",
+        instance_id: "22",
+        compose_hash: "33".repeat(32),
+        os_image_hash: "44".repeat(32),
+      }),
+      attest: async () => ({ attestation: "55" }),
+    });
     await expect(provider.getEvidence("a".repeat(64))).rejects.toThrow(/app_id/);
   });
 });

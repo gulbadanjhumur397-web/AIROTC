@@ -80,7 +80,7 @@ const evidence = {
   services: serviceEvidence,
   privateFieldInspection: inspectPrivateFields(config),
   identityStatus: provisionalIdentity ? "PROVISIONAL_PENDING_HOSTED_ATTESTATION" : "VERIFIED",
-  note: "Platform attestation signature and event-log verification must also be saved from the NEAR Confidential Compute verifier.",
+  note: "Phala platform and worker quote verification, RTMR replay, compose inspection, and image-digest binding are saved separately.",
 };
 if (process.env.PHASE9_EVIDENCE_FILE) await writeEvidence(process.env.PHASE9_EVIDENCE_FILE, evidence);
 process.stdout.write(`${JSON.stringify(evidence, null, 2)}\n`);

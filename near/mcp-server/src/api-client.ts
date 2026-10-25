@@ -1,5 +1,14 @@
 export class PrivacyApiClient {
-  constructor(readonly baseUrl: string, private token: string, private readonly fetcher: typeof fetch = fetch) {}
+  constructor(
+    readonly baseUrl: string,
+    private token: string,
+    private readonly fetcher: typeof fetch = fetch,
+    private readonly requestTimeoutMs = 90_000,
+  ) {
+    if (!Number.isInteger(requestTimeoutMs) || requestTimeoutMs < 1_000 || requestTimeoutMs > 300_000) {
+      throw new Error("Privacy API request timeout must be between 1000 and 300000 milliseconds");
+    }
+  }
 
   async get(path: string): Promise<unknown> {
     return this.request("GET", path);
@@ -23,7 +32,7 @@ export class PrivacyApiClient {
       method,
       headers,
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-      signal: AbortSignal.timeout(20_000),
+      signal: AbortSignal.timeout(this.requestTimeoutMs),
     });
     const value = await response.json().catch(() => null) as { error?: { code?: string; message?: string } } | null;
     if (!response.ok) {

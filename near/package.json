@@ -13,6 +13,8 @@
     "phase9:prepare-env": "node scripts/prepare-testnet-environment.mjs",
     "phase9:secrets": "node scripts/check-secrets.mjs",
     "phase9:inspect": "node scripts/inspect-testnet.mjs",
+    "phase9:verify-phala": "node scripts/verify-phala-evidence.mjs",
+    "phase9:verify-live-privacy": "node scripts/verify-live-privacy.mjs",
     "phase9:verify-txs": "node scripts/verify-deployment-transactions.mjs",
     "phase9:register-tee": "node scripts/register-hosted-tee.mjs",
     "phase9:demo": "node scripts/two-agent-demo.mjs"

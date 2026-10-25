@@ -38,6 +38,11 @@ attestation is never evidence for Phase 7 or Phase 9.
     compose document, image digest, public identity, contract config, and timestamp
     in the evidence bundle.
 
+For the Phala deployment, `pnpm phase9:verify-phala` performs the binding checks,
+replays RTMR0 through RTMR3 from the event log, verifies the compose and immutable
+image digest, and cross-checks the two successful official quote-verifier results.
+It writes a compact public summary without credentials or private ledger data.
+
 ## Failure behavior
 
 Any missing proof, stale/reused nonce, failed signature, unsupported TCB, event-log

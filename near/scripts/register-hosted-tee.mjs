@@ -51,8 +51,9 @@ const provider = new JsonRpcProvider({ url: rpcUrl });
 const owner = new Account(ownerId, provider, ownerPrivateKey);
 let config = await viewFunction(rpcUrl, contractId, "get_config");
 if (config.paused !== true) throw new Error("Pool must remain paused during hosted TEE registration");
-let transactionHash;
+let transactionHash = null;
 let unpauseTransactionHash = null;
+let activationAlreadyComplete = false;
 
 if (action === "propose") {
   if (config.pending_worker !== null) throw new Error("A TEE worker proposal is already pending");
@@ -72,19 +73,25 @@ if (action === "propose") {
   config = await viewFunction(rpcUrl, contractId, "get_config");
   requirePendingMatch(config.pending_worker);
 } else {
-  requirePendingMatch(config.pending_worker);
-  const outcome = await owner.callFunctionRaw({
-    contractId,
-    methodName: "activate_tee_worker",
-    args: {},
-    gas: "30000000000000",
-    deposit: "0",
-    waitUntil: "FINAL",
-  });
-  transactionHash = outcome.transaction.hash;
-  config = await viewFunction(rpcUrl, contractId, "get_config");
+  if (config.pending_worker !== null) {
+    requirePendingMatch(config.pending_worker);
+    const outcome = await owner.callFunctionRaw({
+      contractId,
+      methodName: "activate_tee_worker",
+      args: {},
+      gas: "30000000000000",
+      deposit: "0",
+      waitUntil: "FINAL",
+    });
+    transactionHash = outcome.transaction.hash;
+    config = await viewFunction(rpcUrl, contractId, "get_config");
+  } else if (currentWorkerMatches(config)) {
+    activationAlreadyComplete = true;
+  } else {
+    throw new Error("No matching pending or activated TEE worker identity exists");
+  }
   if (config.pending_worker !== null) throw new Error("TEE proposal remained pending after activation");
-  if (config.tee_worker_id !== workerId || config.tee_measurement_hash !== measurementHash || config.tee_encryption_key_hash !== encryptionKeyHash) {
+  if (!currentWorkerMatches(config)) {
     throw new Error("Activated TEE identity does not match the verified hosted identity");
   }
   if (config.paused !== true) throw new Error("Pool unexpectedly unpaused during activation");
@@ -113,6 +120,7 @@ const evidence = {
   image,
   transactionHash,
   unpauseTransactionHash,
+  activationAlreadyComplete,
   config,
 };
 if (process.env.PHASE9_EVIDENCE_FILE) await writeEvidence(process.env.PHASE9_EVIDENCE_FILE, evidence);
@@ -135,4 +143,10 @@ function requirePendingMatch(pending) {
   if (pending.account_id !== workerId || pending.measurement_hash !== measurementHash || pending.encryption_key_hash !== encryptionKeyHash) {
     throw new Error("Pending TEE worker proposal does not match the verified hosted identity");
   }
+}
+
+function currentWorkerMatches(value) {
+  return value.tee_worker_id === workerId
+    && value.tee_measurement_hash === measurementHash
+    && value.tee_encryption_key_hash === encryptionKeyHash;
 }

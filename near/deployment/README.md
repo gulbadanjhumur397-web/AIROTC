@@ -10,7 +10,8 @@ NEAR testnet and present it to judges.
 - `ATTESTATION.md`: exact confidential-workload verification gate.
 - `REUSE_DISCLOSURE.md`: prior repository work versus the NEAR implementation.
 - `EVIDENCE_TEMPLATE.md`: redacted evidence checklist.
-- `TESTNET_STATE.md`: current public accounts, deployment transactions, and paused bootstrap status.
+- `TESTNET_STATE.md`: current public accounts, deployment transactions, verified worker policy, and pool status.
+- `PHALA_TEE_STATE.md`: public CVM identity, image and compose commitments, quote verification, and worker-key evidence.
 - `testnet.env.example`: placeholder-only runtime inventory.
 - `agents/`: deterministic buyer and seller prompts for separate agent sessions.
 

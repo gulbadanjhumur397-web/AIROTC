@@ -14,7 +14,10 @@ const service = new PrivacyApiService(
     clock,
     handleSecret,
   ),
-  new HttpWorkerProxy((process.env.TEE_WORKER_URL ?? "http://127.0.0.1:8080").replace(/\/$/, "")),
+  new HttpWorkerProxy(
+    (process.env.TEE_WORKER_URL ?? "http://127.0.0.1:8080").replace(/\/$/, ""),
+    timeoutMs("TEE_WORKER_REQUEST_TIMEOUT_MS", 60_000),
+  ),
   clock,
 );
 await service.initialize();
@@ -29,6 +32,16 @@ function required(name: string): string {
   const value = process.env[name];
   if (!value) throw new Error(`${name} is required`);
   return value;
+}
+
+function timeoutMs(name: string, fallback: number): number {
+  const value = process.env[name];
+  if (value === undefined) return fallback;
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isInteger(parsed) || parsed < 1_000 || parsed > 300_000) {
+    throw new Error(`${name} must be between 1000 and 300000`);
+  }
+  return parsed;
 }
 
 export * from "./types.js";

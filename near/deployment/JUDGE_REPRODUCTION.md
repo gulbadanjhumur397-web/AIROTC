@@ -7,14 +7,17 @@ private key, database login, TEE secret, or server shell.
 
 - Application: `[HTTPS frontend URL]`
 - Privacy API health: `[HTTPS API URL]/health`
+- Confidential worker: `https://04e4341dee051bce7eddb75ec19d12e140714b60-8080.dstack-pha-prod9.phala.network`
 - Pool contract: `airotc-hackathon-pool-20261023-25646d5e.testnet`
 - TEE worker account: `airotc-hackathon-worker-20261023-25646d5e.testnet`
 - Contract deployment transaction: `https://testnet.nearblocks.io/txns/HdtMh7AfnUcYh7AW9sKVmmNF2H7aGEvwZ84PnCApvrBw`
-- Final buyer withdrawal: `[NEAR Explorer URL]`
-- Final seller withdrawal: `[NEAR Explorer URL]`
-- Worker image digest: `[registry image@sha256:digest]`
-- Verified compose hash: `[64 lowercase hex]`
-- Attestation verification record: `[public evidence file or URL]`
+- Buyer reusable deposit: `https://testnet.nearblocks.io/txns/CocdYnM967rUMuCaLi2aWLsUwYiZXSa78HU48TBf7mFu`
+- Seller reusable deposit: `https://testnet.nearblocks.io/txns/6CXARjy7oztajKeuvm9UbAj3pwvaVibBEiTURATVSPe5`
+- Final buyer withdrawal: `https://testnet.nearblocks.io/txns/8uoGtyWqLH9gYEXMgzzRrMqN2aacpd9YjQ21cgrSSsdJ`
+- Final seller withdrawal: `https://testnet.nearblocks.io/txns/8fcpTPbNLbgE6sjyrQKeqKDVvCkYMPkxFaYCs5DvE7aK`
+- Worker image digest: `ghcr.io/gulbadanjhumur397-web/airotc-tee-worker@sha256:049b534301d792f69950ce14cc46f0dbc9b1c2362c298de2e264c572cd8af445`
+- Verified compose hash: `bc18c827cf5036f3e48481c07d4f427970dc21cf5eb2bea1557fd2453a9bc828`
+- Attestation verification record: `near/deployment/PHALA_TEE_STATE.md`
 - Source revision: `[Git commit]`
 
 ## Five-minute verification

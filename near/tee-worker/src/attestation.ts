@@ -1,11 +1,9 @@
-import { request } from "node:http";
+import { DstackClient } from "@phala/dstack-sdk";
 import {
   isSha256Hex,
   workerAttestationReportData,
 } from "@air-otc/shared-types";
 import type { AttestationEvidence, AttestationProvider } from "./types.js";
-
-const MAX_DSTACK_RESPONSE_BYTES = 16 * 1024 * 1024;
 
 interface WorkerIdentity {
   workerId: string;
@@ -24,27 +22,30 @@ interface DstackAttestResponse {
   attestation: string;
 }
 
-export type DstackGuestCall = (path: string, body: Record<string, unknown>) => Promise<unknown>;
+export interface DstackGuestClient {
+  info(): Promise<unknown>;
+  attest(reportData: string | Buffer | Uint8Array): Promise<unknown>;
+}
 
 export function attestationReportData(identity: WorkerIdentity, nonce: string): string {
   return workerAttestationReportData(identity, nonce);
 }
 
 export class DstackAttestationProvider implements AttestationProvider {
-  private readonly call: DstackGuestCall;
+  private readonly client: DstackGuestClient;
 
   constructor(
     socketPath = "/var/run/dstack.sock",
-    call?: DstackGuestCall,
+    client?: DstackGuestClient,
   ) {
-    this.call = call ?? ((path, body) => callDstackGuest(socketPath, path, body));
+    this.client = client ?? new DstackClient(socketPath);
   }
 
   async getEvidence(reportData: string): Promise<AttestationEvidence> {
     if (!isSha256Hex(reportData)) throw new Error("Attestation report data must be a SHA-256 hash");
     const [rawInfo, rawAttestation] = await Promise.all([
-      this.call("/v1/Info", {}),
-      this.call("/v1/Attest", { report_data: reportData, include_boottime_gpu_evidence: false }),
+      this.client.info(),
+      this.client.attest(Buffer.from(reportData, "hex")),
     ]);
     const info = requireObject(rawInfo, "dstack info") as unknown as DstackInfoResponse;
     const attestation = requireObject(rawAttestation, "dstack attestation") as unknown as DstackAttestResponse;
@@ -86,54 +87,6 @@ export class DevelopmentAttestationProvider implements AttestationProvider {
       issuedAt: new Date(0).toISOString(),
     };
   }
-}
-
-function callDstackGuest(
-  socketPath: string,
-  path: string,
-  body: Record<string, unknown>,
-): Promise<unknown> {
-  const encoded = Buffer.from(JSON.stringify(body), "utf8");
-  return new Promise((resolve, reject) => {
-    const outgoing = request(
-      {
-        socketPath,
-        path,
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "content-length": encoded.length,
-        },
-      },
-      (response) => {
-        const chunks: Buffer[] = [];
-        let size = 0;
-        response.on("data", (chunk: Buffer) => {
-          size += chunk.length;
-          if (size > MAX_DSTACK_RESPONSE_BYTES) {
-            response.destroy(new Error("dstack response exceeded the size limit"));
-            return;
-          }
-          chunks.push(chunk);
-        });
-        response.once("error", reject);
-        response.once("end", () => {
-          const text = Buffer.concat(chunks).toString("utf8");
-          if ((response.statusCode ?? 500) < 200 || (response.statusCode ?? 500) >= 300) {
-            reject(new Error(`dstack guest request failed with status ${response.statusCode ?? 500}`));
-            return;
-          }
-          try {
-            resolve(JSON.parse(text));
-          } catch {
-            reject(new Error("dstack guest returned invalid JSON"));
-          }
-        });
-      },
-    );
-    outgoing.once("error", reject);
-    outgoing.end(encoded);
-  });
 }
 
 function requireObject(value: unknown, name: string): Record<string, unknown> {

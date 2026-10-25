@@ -102,12 +102,11 @@ The command refuses to overwrite an account that already contains contract code.
 It requires the verified worker account, compose measurement hash, and worker
 encryption-key hash. Save its JSON output under `near/evidence/`.
 
-The current hackathon pool was deployed before the hosting platform was supplied.
-It uses an explicitly provisional bootstrap commitment and was immediately paused
-by the deployment script. This is recorded in `TESTNET_STATE.md` and must never be
-described as verified TEE identity. After hosting, replace the provisional values,
-lock down the worker key, then use `register-hosted-tee.mjs propose` and
-`register-hosted-tee.mjs activate` to rotate the verified identity and unpause.
+The current hackathon pool was initially deployed with a provisional bootstrap
+commitment and paused. On 2026-10-25, the verified Phala workload values replaced
+that identity through `register-hosted-tee.mjs propose` and delayed activation.
+The pool is now unpaused. The public values and transaction references are recorded
+in `TESTNET_STATE.md` and `PHALA_TEE_STATE.md`.
 
 ## 5. Lock down the worker account
 
@@ -125,8 +124,10 @@ exactly one function-call key, restricted to this pool contract and the methods
 ## 6. Start and verify the TEE
 
 Start the digest-pinned confidential workload. Verify a fresh nonce-bound quote as
-described in `ATTESTATION.md`. The worker must fail startup if its key scope, pool
-contract, ledger snapshot, or anchor state is inconsistent.
+described in `ATTESTATION.md`. For Phala, save both official quote-verifier
+responses, load the public deployment values, and run `pnpm phase9:verify-phala`.
+The worker must fail startup if its key scope, pool contract, ledger snapshot, or
+anchor state is inconsistent.
 
 Run live inspection:
 
@@ -185,5 +186,6 @@ terms, credentials, keys, tokens, or exact private balances.
 
 Run the secret scan again, inspect every recorded transaction in NEAR Explorer,
 complete `EVIDENCE_TEMPLATE.md`, follow `JUDGE_REPRODUCTION.md` from a clean
-machine, and record `DEMO_SCRIPT.md`. Phase 7 and the last Phase 8 item close only
-after this hosted run succeeds.
+machine, and record `DEMO_SCRIPT.md`. Phase 8's live-chain inspection was completed
+against the Phala/NEAR integration run. Phase 7 closes only after the same flow
+succeeds through publicly hosted API and MCP services.

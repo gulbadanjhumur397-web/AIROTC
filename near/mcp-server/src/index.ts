@@ -4,7 +4,12 @@ import { McpStdioServer } from "./server.js";
 import { AgentTools } from "./tools.js";
 import { nearPoolPolicyProvider, WorkerTrustVerifier } from "./worker-trust.js";
 
-const api = new PrivacyApiClient(required("PRIVACY_API_URL").replace(/\/$/, ""), required("AIROTC_MCP_TOKEN"));
+const api = new PrivacyApiClient(
+  required("PRIVACY_API_URL").replace(/\/$/, ""),
+  required("AIROTC_MCP_TOKEN"),
+  fetch,
+  timeoutMs("PRIVACY_API_REQUEST_TIMEOUT_MS", 90_000),
+);
 const trust = new WorkerTrustVerifier(api, nearPoolPolicyProvider({
   rpcUrl: required("NEAR_RPC_URL"),
   contractId: required("NEAR_POOL_CONTRACT_ID"),
@@ -21,6 +26,13 @@ const tools = new AgentTools({
 new McpStdioServer(tools).start();
 
 function required(name: string): string { const value = process.env[name]; if (!value) throw new Error(`${name} is required`); return value; }
+function timeoutMs(name: string, fallback: number): number {
+  const value = process.env[name];
+  if (value === undefined) return fallback;
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isInteger(parsed) || parsed < 1_000 || parsed > 300_000) throw new Error(`${name} is invalid`);
+  return parsed;
+}
 
 export * from "./api-client.js";
 export * from "./tools.js";

@@ -25,6 +25,60 @@ const buyerId = requireAccount(required("DEMO_BUYER_ACCOUNT_ID"), "DEMO_BUYER_AC
 const sellerId = requireAccount(required("DEMO_SELLER_ACCOUNT_ID"), "DEMO_SELLER_ACCOUNT_ID");
 if (buyerId === sellerId) throw new Error("Buyer and seller accounts must be different");
 
+class McpProcess {
+  constructor(name, environment) {
+    this.name = name;
+    this.environment = environment;
+    this.nextId = 1;
+    this.pending = new Map();
+  }
+  async start() {
+    this.child = spawn(process.execPath, [serverPath], {
+      cwd: nearRoot,
+      env: {
+        PATH: process.env.PATH ?? "",
+        NODE_ENV: localMode ? "development" : "production",
+        TZ: process.env.TZ ?? "UTC",
+        ...this.environment,
+      },
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+    createInterface({ input: this.child.stdout }).on("line", (line) => this.handle(line));
+    this.child.stderr.on("data", () => {});
+    this.child.once("exit", (code) => {
+      for (const pending of this.pending.values()) pending.reject(new Error(`${this.name} MCP process exited with code ${code}`));
+      this.pending.clear();
+    });
+    await this.request("initialize", { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "airotc-demo", version: "1" } });
+  }
+  request(method, params) {
+    const id = this.nextId++;
+    return new Promise((resolvePromise, reject) => {
+      const timeout = setTimeout(() => {
+        this.pending.delete(id);
+        reject(new Error(`${this.name} MCP request timed out`));
+      }, 120_000);
+      this.pending.set(id, {
+        resolve: (value) => { clearTimeout(timeout); resolvePromise(value); },
+        reject: (error) => { clearTimeout(timeout); reject(error); },
+      });
+      this.child.stdin.write(`${JSON.stringify({ jsonrpc: "2.0", id, method, params })}\n`);
+    });
+  }
+  handle(line) {
+    let message;
+    try { message = JSON.parse(line); } catch { return; }
+    const pending = this.pending.get(message.id);
+    if (!pending) return;
+    this.pending.delete(message.id);
+    if (message.error) pending.reject(new Error(`MCP protocol error ${message.error.code}`));
+    else pending.resolve(message.result);
+  }
+  stop() {
+    this.child?.kill("SIGTERM");
+  }
+}
+
 const buyer = new McpProcess("buyer", agentEnvironment("BUYER", buyerId));
 const seller = new McpProcess("seller", agentEnvironment("SELLER", sellerId));
 const calls = [];
@@ -214,60 +268,6 @@ function publicWithdrawal(value) {
     transactionHash: value.transactionHash,
     explorerUrl: explorerTransaction(value.transactionHash),
   };
-}
-
-class McpProcess {
-  constructor(name, environment) {
-    this.name = name;
-    this.environment = environment;
-    this.nextId = 1;
-    this.pending = new Map();
-  }
-  async start() {
-    this.child = spawn(process.execPath, [serverPath], {
-      cwd: nearRoot,
-      env: {
-        PATH: process.env.PATH ?? "",
-        NODE_ENV: localMode ? "development" : "production",
-        TZ: process.env.TZ ?? "UTC",
-        ...this.environment,
-      },
-      stdio: ["pipe", "pipe", "pipe"],
-    });
-    createInterface({ input: this.child.stdout }).on("line", (line) => this.handle(line));
-    this.child.stderr.on("data", () => {});
-    this.child.once("exit", (code) => {
-      for (const pending of this.pending.values()) pending.reject(new Error(`${this.name} MCP process exited with code ${code}`));
-      this.pending.clear();
-    });
-    await this.request("initialize", { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "airotc-demo", version: "1" } });
-  }
-  request(method, params) {
-    const id = this.nextId++;
-    return new Promise((resolvePromise, reject) => {
-      const timeout = setTimeout(() => {
-        this.pending.delete(id);
-        reject(new Error(`${this.name} MCP request timed out`));
-      }, 30_000);
-      this.pending.set(id, {
-        resolve: (value) => { clearTimeout(timeout); resolvePromise(value); },
-        reject: (error) => { clearTimeout(timeout); reject(error); },
-      });
-      this.child.stdin.write(`${JSON.stringify({ jsonrpc: "2.0", id, method, params })}\n`);
-    });
-  }
-  handle(line) {
-    let message;
-    try { message = JSON.parse(line); } catch { return; }
-    const pending = this.pending.get(message.id);
-    if (!pending) return;
-    this.pending.delete(message.id);
-    if (message.error) pending.reject(new Error(`MCP protocol error ${message.error.code}`));
-    else pending.resolve(message.result);
-  }
-  stop() {
-    this.child?.kill("SIGTERM");
-  }
 }
 
 function requestId(prefix) { return `${prefix}_${randomBytes(18).toString("base64url")}`; }
