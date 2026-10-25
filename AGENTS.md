@@ -2,20 +2,30 @@
 
 ## Active objective
 
-Phases 1–6 are complete at the code and local-integration level. Phase 7 is intentionally deferred: do not mark it complete until two independent agents complete the entire MCP deal flow against the hosted application, real NEAR testnet contract, and verified confidential-compute deployment.
+Phases 1–7 are complete. Phase 7 closed on 2026-10-25 after two independent MCP
+processes completed the entire deal flow through the Fly-hosted privacy API and demo
+product API, real NEAR testnet contract, and verified Phala confidential worker.
 
-The locally provable parts of Phase 8 are complete: adversarial signature/tamper/replay/expiry tests, role and wallet isolation, numeric and balance safety, worker identity rotation/rejection, persistence and log leakage scans, timeout/cancellation/pause/recovery behavior, sandbox public-chain privacy inspection, and a written privacy-claim review. Deployment-dependent NEAR Explorer and hardware-attestation evidence remains open until Phase 9.
+Phase 8 is complete with adversarial signature/tamper/replay/expiry tests, role and
+wallet isolation, numeric and balance safety, worker identity rotation/rejection,
+persistence and log leakage scans, timeout/cancellation/pause/recovery behavior,
+live public-chain privacy inspection, hardware attestation, and a written
+privacy-claim review.
 
 ## Completion status
 
 Phases 4–6 were completed at the code and local-integration level on 2026-10-23. The authoritative comparison is `near/PHASES_4_6_TRACEABILITY.md`: 22/22 implementation tasks and 6/6 exit-criterion groups are mapped to passing evidence. Do not treat live testnet/CVM deployment or the independent two-agent public demo as part of this completion claim; those remain Phases 7–9.
 
-Phase 7 may only be completed from hosted evidence: two separate agent processes, wallets, and MCP tokens; real testnet transaction references; verified NEAR confidential-compute evidence; and no direct database access.
+Phase 7 hosted evidence is mapped in `near/PHASE_7_HOSTED_TRACEABILITY.md`: two
+separate agent processes, wallets, wallet-signed MCP tokens, encrypted messages,
+real testnet transaction references, verified confidential-compute evidence, and no
+direct database access.
 
 Phase 8 is complete: all 8/8 roadmap tasks have mapped evidence. In addition to
-the 105-test local result, the live audit inspected 13 real NEAR testnet
-transactions from the deployed worker flow: two deposits, eight batched ledger-root
-anchors, and three withdrawals. It found no ticket, deal, terms, price, collateral,
+the 105-test local result, the latest live audit inspected 20 real NEAR testnet
+transactions from the deployed worker flows: two deposits, thirteen batched
+ledger-root anchors, and five withdrawals. It found no ticket, deal, terms, price,
+collateral,
 delivery, product, credential, or private-balance field on chain.
 
 Phase 9 progress is recorded in `near/PHASE_9_PREDEPLOYMENT_TRACEABILITY.md`. The
@@ -23,10 +33,12 @@ testnet pool and a production Phala Cloud dstack CVM are deployed. The Intel TDX
 quotes, event log, compose hash, image digest, nonce-bound worker identity, and
 restricted worker key were independently verified on 2026-10-25. The verified
 identity is registered and the pool is unpaused. Buyer and seller reusable deposits
-were claimed into private balances, and the real two-process MCP flow passed against
-Phala and NEAR testnet. Remaining service hosting, new hosted MCP grants, the hosted
-two-agent rerun, and video remain open. The integration and live Explorer privacy
-inspection do not satisfy Phase 7 until the API and MCP boundary is publicly hosted.
+were claimed into private balances. The privacy API and demo product API are hosted
+as isolated `airotc-*` Fly apps, encrypted API state is on a dedicated Fly volume,
+fresh wallet-signed hosted MCP grants were issued, and the real two-process MCP flow
+passed through those public HTTPS services. The latest Explorer audit passed over 20
+transactions. Only the presentation recording remains open; the frontend stays
+undeployed unless the user explicitly requests it.
 Do not modify either frontend unless the user explicitly requests frontend work.
 
 ## Non-negotiable architecture

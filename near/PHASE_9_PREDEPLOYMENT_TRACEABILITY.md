@@ -1,8 +1,8 @@
-# Phase 9 predeployment traceability
+# Phase 9 deployment traceability
 
-This comparison tracks the live Phase 9 deployment. The NEAR testnet contract and
-Phala confidential worker are deployed and cryptographically bound. It does not
-yet claim the remaining service hosting or the hosted two-agent end-to-end run.
+This comparison tracks the live Phase 9 deployment. The NEAR testnet contract,
+Phala confidential worker, Fly API boundary, encrypted storage, hosted token grants,
+and hosted two-agent flow are deployed and verified.
 
 | Phase 9 requirement | Prepared implementation/evidence | Current state |
 | --- | --- | --- |
@@ -10,11 +10,11 @@ yet claim the remaining service hosting or the hosted two-agent end-to-end run.
 | Deploy worker and verify attestation | Production Phala dstack CVM, digest-pinned GHCR image, fresh worker/platform Intel TDX quotes, official verifier results, RTMR replay, compose/image/identity cross-check | **Complete**; live endpoint and public evidence recorded |
 | Publish reproducible worker image from the public repository | GitHub Actions verifies the worker, builds `linux/amd64`, and publishes commit and `testnet` tags with `packages: write` | **Complete**; run `40171838109` published immutable digest `sha256:60e57b5c19ad23ff14e594026e6eccec804b65db199cfa8ad5a0aaed400da18c` |
 | Provision exact worker key | Key injected through encrypted CVM environment; guarded lockdown left one function-call key for the exact pool and two methods | **Complete**; no FullAccess or additional worker key remains |
-| Verify scheduled timeouts and batched roots | Automatic timeout tests plus live Phala maintenance; Explorer audit found eight root anchors and final sequence 11 | **Complete** |
+| Verify scheduled timeouts and batched roots | Automatic timeout tests plus live Phala maintenance; Explorer audit found thirteen root anchors and final sequence 16 | **Complete** |
 | Register approved TEE identity | Verified worker proposal, delayed activation, exact on-chain hash checks, and unpause | **Complete** on NEAR testnet |
-| Deploy API, MCP, frontend, database, ciphertext storage | Environment inventory and operator sequence | Hosting intentionally deferred |
-| Run full two-agent test | Separate buyer/seller MCP processes completed mismatch, match, delivery, credential use, confirmation, settlement, and withdrawals against Phala and NEAR testnet | Real integration complete with local API/MCP boundary; public-hosting rerun still required for Phase 7 |
-| Exact judge reproduction steps | `deployment/JUDGE_REPRODUCTION.md` | TEE and contract values recorded; remaining service and withdrawal URLs pending |
+| Deploy API, MCP, frontend, database, ciphertext storage | Fly-hosted privacy API, dedicated encrypted volume, and demo product API; separate buyer/seller MCP stdio processes | **Complete for the agent-first product**; frontend deployment explicitly excluded by the user |
+| Run full two-agent test | Separate buyer/seller MCP processes completed mismatch, match, delivery, credential use, confirmation, settlement, and withdrawals through Fly, Phala, and NEAR testnet | **Complete**; Phase 7 hosted evidence recorded |
+| Exact judge reproduction steps | `deployment/JUDGE_REPRODUCTION.md` | **Complete** with public service, worker, pool, and transaction URLs |
 | Record demo | `deployment/DEMO_SCRIPT.md` | Script prepared; recording pending |
 | Reused versus hackathon work | Root README section and `deployment/REUSE_DISCLOSURE.md` | Complete |
 | Architecture, privacy, threat model, attestation | `SECURITY_AND_PRIVACY.md`, `ATTESTATION.md`, and diagrams | Complete |
@@ -33,13 +33,11 @@ yet claim the remaining service hosting or the hosted two-agent end-to-end run.
 - Live inspection verifies the contract configuration, the worker's sole restricted
   key, service health, public-state privacy, and local artifact hash.
 
-## Remaining live work
+## Remaining presentation work
 
-1. Public HTTPS URLs and durable encrypted storage for the privacy API, MCP server,
-   demo API, and other non-TEE services.
-2. New wallet-signed MCP grants issued by the hosted API. The existing deposits are
-   already claimed in the persistent private ledger.
-3. The publicly hosted two-agent rerun and video evidence.
+1. Record the five-minute judge video using `deployment/DEMO_SCRIPT.md`.
+2. Deploy a human-facing frontend only if the user later requests it. It is not
+   required for the agent-first MCP deal flow and was explicitly excluded here.
 
 ## Verification performed on 2026-10-25
 
@@ -78,6 +76,16 @@ yet claim the remaining service hosting or the hosted two-agent end-to-end run.
   `9f9f8d7f7bbdc46b27bc9a1523632058dcf72a1c`. The running CVM remains pinned to its
   already attested image; deploying the new CI digest requires a fresh attestation
   and delayed on-chain identity rotation.
+- Deployed `airotc-privacy-api-gulbadan` and `airotc-demo-api-gulbadan` as new
+  Fly apps in `sin`. The privacy API uses the dedicated encrypted 1 GB volume
+  `airotc_privacy_data`; both Machines expose HTTPS health checks and stop when idle.
+- Issued fresh wallet-signed buyer and seller MCP grants through the hosted API.
+- Two independent MCP processes completed the hosted flow with `NO_MATCH`, `MATCH`,
+  `FUNDED`, encrypted delivery, successful credential use, `COMPLETED`, and two real
+  withdrawals. See `PHASE_7_HOSTED_TRACEABILITY.md`.
+- The final Explorer audit decoded 20 transactions: two deposits, thirteen ledger
+  roots, and five withdrawals. No private deal field appeared in arguments, events,
+  logs, or public configuration.
 
 ## Verification performed on 2026-10-24
 
@@ -90,7 +98,7 @@ yet claim the remaining service hosting or the hosted two-agent end-to-end run.
   public configuration.
 
 - Phase 9 preflight passed with 32 required artifacts and 17 script syntax checks.
-- The source secret scanner inspected 1,051 tracked/untracked non-ignored files and
+- The source secret scanner inspected 1,057 tracked/untracked non-ignored files and
   found zero private keys, MCP tokens, PEM keys, unsafe secret files, or populated
   secret environment values.
 - Type checks passed for shared types, worker, privacy API, MCP, and integration

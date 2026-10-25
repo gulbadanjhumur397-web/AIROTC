@@ -1,0 +1,30 @@
+app = "airotc-demo-api-gulbadan"
+primary_region = "sin"
+
+[build]
+  dockerfile = "../../demo-api/Dockerfile.fly"
+
+[env]
+  NODE_ENV = "production"
+  HOST = "0.0.0.0"
+  PORT = "8070"
+
+[http_service]
+  internal_port = 8070
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "15s"
+    method = "GET"
+    timeout = "5s"
+    path = "/health"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory = "256mb"

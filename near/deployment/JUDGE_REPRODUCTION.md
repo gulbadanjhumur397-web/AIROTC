@@ -1,29 +1,28 @@
 # Judge reproduction
 
-Replace the bracketed public deployment values after hosting. No judge needs a
-private key, database login, TEE secret, or server shell.
+No judge needs a private key, database login, TEE secret, or server shell.
 
 ## Public deployment record
 
-- Application: `[HTTPS frontend URL]`
-- Privacy API health: `[HTTPS API URL]/health`
+- Human frontend: intentionally not deployed for this agent-first demonstration
+- Privacy API health: `https://airotc-privacy-api-gulbadan.fly.dev/health`
+- Demonstration API health: `https://airotc-demo-api-gulbadan.fly.dev/health`
 - Confidential worker: `https://04e4341dee051bce7eddb75ec19d12e140714b60-8080.dstack-pha-prod9.phala.network`
 - Pool contract: `airotc-hackathon-pool-20261023-25646d5e.testnet`
 - TEE worker account: `airotc-hackathon-worker-20261023-25646d5e.testnet`
 - Contract deployment transaction: `https://testnet.nearblocks.io/txns/HdtMh7AfnUcYh7AW9sKVmmNF2H7aGEvwZ84PnCApvrBw`
 - Buyer reusable deposit: `https://testnet.nearblocks.io/txns/CocdYnM967rUMuCaLi2aWLsUwYiZXSa78HU48TBf7mFu`
 - Seller reusable deposit: `https://testnet.nearblocks.io/txns/6CXARjy7oztajKeuvm9UbAj3pwvaVibBEiTURATVSPe5`
-- Final buyer withdrawal: `https://testnet.nearblocks.io/txns/8uoGtyWqLH9gYEXMgzzRrMqN2aacpd9YjQ21cgrSSsdJ`
-- Final seller withdrawal: `https://testnet.nearblocks.io/txns/8fcpTPbNLbgE6sjyrQKeqKDVvCkYMPkxFaYCs5DvE7aK`
+- Final buyer withdrawal: `https://testnet.nearblocks.io/txns/9Ejay9ugyiFohkNyjhZHA6Ujk58fpt6nYBxE6ke9Zo32`
+- Final seller withdrawal: `https://testnet.nearblocks.io/txns/6HWGX1XuJc5mELQ9dPZa765b3NjyZ8SzDSDm6w8JdsfC`
 - Worker image digest: `ghcr.io/gulbadanjhumur397-web/airotc-tee-worker@sha256:049b534301d792f69950ce14cc46f0dbc9b1c2362c298de2e264c572cd8af445`
 - Verified compose hash: `bc18c827cf5036f3e48481c07d4f427970dc21cf5eb2bea1557fd2453a9bc828`
 - Attestation verification record: `near/deployment/PHALA_TEE_STATE.md`
-- Source revision: `[Git commit]`
+- Source branch: `near-testnet-hackathon`
 
 ## Five-minute verification
 
-1. Open the application and confirm it identifies NEAR testnet and the pool
-   contract above.
+1. Open both health URLs and confirm the Fly-hosted API services are live.
 2. Open the contract in NEAR Explorer. Confirm its code exists and `get_config`
    reports the worker account and workload hashes above.
 3. Inspect the worker account access keys. It must have exactly one key, restricted

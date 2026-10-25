@@ -22,7 +22,7 @@ Verified on 2026-10-25 against NEAR testnet and the live Phala confidential VM.
 - Verified worker activation: `8aNPMePkeFuRzHxpFwdy94xVCw4914nRNg9mhbpJ9rAN`
 - Pool unpause: `BEVmCYVKo5eJ6HV9qqPbG3dvmo9QTLDfF5kGXuPEhZpS`
 - Pool state: **unpaused**
-- Pool liability after deposits and three small test withdrawals: `1994977000000000000000000`
+- Pool liability after deposits and five small test withdrawals: `1994975000000000000000000`
 
 ## Verified confidential worker
 
@@ -74,14 +74,40 @@ the successful final run. No ticket, deal, terms, price, collateral, delivery,
 product, credential, or private-balance field appeared in public arguments, events,
 or contract configuration.
 
-## Remaining live work
+## Hosted Fly deployment
 
-1. Host the privacy API, MCP server, demo API, and supporting database.
-2. Configure their public URLs to use the worker endpoint and testnet contract.
-3. Create fresh wallet-bound MCP grants from the hosted API. The existing deposits
-   are already claimed in the worker's persistent private ledger.
-4. Repeat the already-passing two-agent flow through the publicly hosted services.
-5. Save the hosted-run evidence and video.
+- Privacy API: `https://airotc-privacy-api-gulbadan.fly.dev`
+- Privacy Machine: `1854e46c6d4038`, region `sin`
+- Encrypted durable volume: `airotc_privacy_data`, 1 GB
+- Demo product API: `https://airotc-demo-api-gulbadan.fly.dev`
+- Demo Machine: `0801699c92d518`, region `sin`
+
+Both services have passing HTTPS health checks and stop when idle. Runtime secrets
+are stored as Fly secrets. The encrypted API database is on the dedicated volume.
+The existing `air-arena-*` applications were not modified.
+
+Fresh wallet-signed buyer and seller grants were issued through the hosted API.
+Two independent MCP processes then completed the complete flow using only the 22
+documented MCP tools:
+
+- intentional mismatch: `WAITING_FOR_COUNTERPARTY` then `NO_MATCH`
+- exact terms: `MATCH`, deal `FUNDED`
+- encrypted delivery: buyer decrypted and used the credential successfully
+- confirmation: deal `COMPLETED`
+- buyer withdrawal: `9Ejay9ugyiFohkNyjhZHA6Ujk58fpt6nYBxE6ke9Zo32`
+- seller withdrawal: `6HWGX1XuJc5mELQ9dPZa765b3NjyZ8SzDSDm6w8JdsfC`
+- final ledger sequence: `16`
+- final root: `2ed0d49e157252a322a8c14d93d138f285c049f34693016cb7716cc5a87707d8`
+
+The final Explorer audit decoded 20 transactions: two deposits, thirteen root
+anchors, and five withdrawals. It found no ticket, deal, terms, price, collateral,
+delivery, product, credential, or private-balance field. The frontend was not
+deployed because the user explicitly excluded frontend work. MCP remains a separate
+stdio process per agent so buyer and seller secrets never share one service.
+
+## Remaining presentation work
+
+Record the judge video using `DEMO_SCRIPT.md`.
 
 Secret keys are stored only in ignored mode-600 files under `near/.secrets/` and are
 not included in this record or the public TEE evidence.

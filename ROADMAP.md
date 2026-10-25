@@ -732,20 +732,19 @@ Exit criteria:
 
 ### Phase 7: Two-agent end-to-end system
 
-Hosted-only completion gate: keep this phase open until the Phase 9 services are
-hosted and two independent agents complete the entire flow against the real NEAR
-testnet contract and verified confidential-compute deployment. A local simulated
-pair does not satisfy this phase.
+Status: **complete on 2026-10-25**. Two independent MCP processes completed the
+entire flow through the Fly-hosted privacy API and demonstration product API, real
+NEAR testnet contract, and verified Phala confidential worker.
 
 Tasks:
 
 - [x] Create independent buyer and seller agent profiles.
-- [ ] Give each agent a separate MCP token and testnet account. Separate funded accounts exist; hosted wallet-signed MCP grants remain.
+- [x] Give each agent a separate wallet-signed MCP token and testnet account.
 - [x] Add deterministic role prompts and spending limits.
 - [x] Create a demonstration API-key product.
-- [ ] Implement the autonomous happy-path scenario.
+- [x] Implement the autonomous happy-path scenario.
 - [x] Implement a deterministic scripted fallback.
-- [ ] Capture redacted events, transaction hashes, and balance assertions.
+- [x] Capture redacted events, transaction hashes, and balance assertions.
 
 Exit criteria:
 
@@ -762,12 +761,13 @@ Tasks:
 - [x] Run insufficient-balance and overflow tests.
 - [x] Run TEE identity rotation and rejection tests.
 - [x] Run database and log leakage scans.
-- [ ] Inspect NEAR explorer data for unintended terms.
+- [x] Inspect NEAR explorer data for unintended terms.
 - [x] Test seller timeout, buyer timeout, mutual cancel, pause, and recovery.
 - [x] Review all privacy claims against observable evidence.
 
-The equivalent public-state inspection has passed in NEAR sandbox. The Explorer
-item remains open until Phase 9 creates real testnet transactions to inspect.
+The Explorer audit decoded 20 real transactions from the deployed flows: two
+deposits, thirteen ledger-root anchors, and five withdrawals. No forbidden private
+deal field appeared in arguments, logs, events, or public contract configuration.
 
 Exit criteria:
 
@@ -778,24 +778,23 @@ Exit criteria:
 
 Tasks:
 
-- [x] Deploy the contract to NEAR testnet. It is initialized and deliberately paused pending verified hosted TEE identity.
-- [ ] Deploy the TEE worker and verify attestation.
-- [ ] Provision the exact two-method NEAR worker key through the CVM encrypted environment, remove the bootstrap FullAccess key, and verify it is the account's only key on-chain.
-- [ ] Verify scheduled timeouts and batched root anchoring against the hosted worker.
-- [ ] Register the approved TEE identity with the contract.
-- [ ] Deploy API, MCP server, frontend, database, and ciphertext storage.
-- [ ] Run the full two-agent test against deployed infrastructure.
-- [ ] Write exact judge reproduction steps. A complete template is prepared; final hosted URLs and transaction hashes remain pending.
+- [x] Deploy the contract to NEAR testnet, register the verified worker, and unpause it.
+- [x] Deploy the TEE worker and verify attestation.
+- [x] Provision the exact two-method NEAR worker key through the CVM encrypted environment, remove the bootstrap FullAccess key, and verify it is the account's only key on-chain.
+- [x] Verify scheduled timeouts and batched root anchoring against the hosted worker.
+- [x] Register the approved TEE identity with the contract.
+- [x] Deploy the privacy API, encrypted database volume, and demonstration product API. MCP remains a separate stdio process per agent as designed; the user explicitly excluded frontend deployment.
+- [x] Run the full two-agent test against deployed infrastructure.
+- [x] Write exact judge reproduction steps with public URLs and transaction hashes.
 - [ ] Record the demo.
 - [x] Update README with reused versus hackathon work.
 - [x] Produce architecture, privacy, threat-model, and attestation documents.
 - [x] Confirm no secret is present in the current source tree; rerun the automated scan before publication.
 
-All non-hosted Phase 9 work is mapped in
-`near/PHASE_9_PREDEPLOYMENT_TRACEABILITY.md`. The testnet pool is deployed in a
-paused provisional state. CVM evidence, worker-key encrypted provisioning, public
-URLs, reusable deposits, the hosted two-agent run, final Explorer inspection, and
-recording remain open until hosting access is supplied.
+Phase 9 evidence is mapped in `near/PHASE_9_PREDEPLOYMENT_TRACEABILITY.md`. The
+contract, verified confidential worker, Fly-hosted API boundary, encrypted durable
+storage, wallet-bound grants, hosted two-agent run, and final Explorer inspection
+are complete. The presentation recording remains open.
 
 Exit criteria:
 

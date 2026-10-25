@@ -4,7 +4,10 @@ Review date: 2026-10-24
 
 Scope: `near/shared-types`, `near/escrow-contract`, `near/tee-worker`, `near/privacy-api`, `near/mcp-server`, `near/web`, and the local/sandbox integration boundary.
 
-This review covers locally reproducible code and NEAR sandbox evidence. A real NEAR testnet Explorer review and cryptographic verification of the deployed confidential VM remain Phase 9 deployment gates. Development attestation is never accepted as production evidence.
+This review began with locally reproducible code and NEAR sandbox evidence. Its
+deployment gates were later completed against the live NEAR testnet contract,
+production Phala confidential VM, Fly-hosted API boundary, and public Explorer.
+Development attestation is never accepted as production evidence.
 
 ## Security result
 
@@ -50,11 +53,15 @@ No LLM, NLP model, chat message, API administrator, or middleman can authorize a
 - Snapshot rollback, chain-root rollback, or root mismatch: worker startup fails closed.
 - Worker compromise/replacement: owner pauses the pool, waits through delayed recovery, verifies replacement evidence, registers the new account/measurement/key hash, and explicitly resumes.
 
-## Deployment gates still open
+## Completed deployment verification
 
-1. Verify a fresh real CVM quote, TCB status, event-log replay, compose hash, image digest/provenance, and nonce/key binding.
-2. Register the verified worker account, compose hash, and encryption-identity hash in the deployed testnet contract.
-3. Confirm through CVM secret provisioning and attestation evidence that the exact restricted worker key is available only to the measured workload; source code and local tests cannot prove this deployment fact.
-4. Inspect real NEAR Explorer transactions, arguments, receipts, and events for every demo step and confirm that no private term appears.
-5. Verify the hosted 15-second maintenance behavior and root batching, repeat the full security suite against hosted endpoints, then run the two independent hosted agents required by Phase 7.
+1. Fresh production Phala worker and platform quotes passed the official verifier;
+   TCB evidence, event-log replay, compose/image hashes, and nonce/key binding match.
+2. The verified worker account, compose hash, and encryption-identity hash are
+   registered in the unpaused NEAR testnet contract.
+3. The worker account has exactly one function-call key, restricted to the pool's
+   `anchor_ledger_root` and `withdraw` methods; the local provisioning copy was purged.
+4. The Explorer audit decoded 20 transactions and found no private deal field.
+5. Root batching and the full two-agent flow passed through the Fly-hosted API,
+   production confidential worker, and NEAR testnet contract.
 

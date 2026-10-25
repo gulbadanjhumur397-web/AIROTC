@@ -1,0 +1,40 @@
+app = "airotc-privacy-api-gulbadan"
+primary_region = "sin"
+
+[build]
+  dockerfile = "../../privacy-api/Dockerfile.fly"
+
+[env]
+  NODE_ENV = "production"
+  HOST = "0.0.0.0"
+  PORT = "8090"
+  NEAR_RPC_URL = "https://rpc.testnet.near.org"
+  NEAR_POOL_CONTRACT_ID = "airotc-hackathon-pool-20261023-25646d5e.testnet"
+  TEE_WORKER_URL = "https://04e4341dee051bce7eddb75ec19d12e140714b60-8080.dstack-pha-prod9.phala.network"
+  TEE_WORKER_REQUEST_TIMEOUT_MS = "60000"
+  PRIVACY_API_DATABASE_PATH = "/var/lib/airotc/privacy-api.db"
+  WEB_ORIGIN = ""
+
+[http_service]
+  internal_port = 8090
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  [[http_service.checks]]
+    grace_period = "20s"
+    interval = "15s"
+    method = "GET"
+    timeout = "5s"
+    path = "/health"
+
+[[mounts]]
+  source = "airotc_privacy_data"
+  destination = "/var/lib/airotc"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory = "256mb"

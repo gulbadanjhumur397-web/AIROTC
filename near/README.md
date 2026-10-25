@@ -43,16 +43,15 @@ Phases 1–6 are complete in code and local integration.
 source and test evidence. Phase 8 is 8/8 complete with local, live Phala TDX, and
 NEAR testnet evidence; `PHASE_8_TRACEABILITY.md` contains the comparison.
 
-Phase 7 is deliberately open. It is complete only after two independent agents use
-separate wallets and MCP tokens to finish the full deal flow through the publicly
-hosted application. The same flow already passed with two independent MCP processes,
-the locally run API/MCP boundary, the deployed NEAR testnet pool, and the verified
-Phala confidential worker.
+Phase 7 is complete. Two independent MCP processes with separate wallets and fresh
+wallet-signed tokens finished the full flow through the Fly-hosted privacy API and
+demo product API, deployed NEAR testnet pool, and verified Phala confidential
+worker. `PHASE_7_HOSTED_TRACEABILITY.md` maps each requirement to the hosted result.
 
 The NEAR contract and Phala worker are live and cryptographically bound. The pool is
 unpaused, the worker key is restricted to two contract methods, the public-repository
-CI image build is green, and Explorer privacy checks passed across the real
+CI image build is green, and Explorer privacy checks passed across 20 real
 transactions. `deployment/TESTNET_STATE.md`, `deployment/PHALA_TEE_STATE.md`, and
 `PHASE_9_PREDEPLOYMENT_TRACEABILITY.md` record the addresses, measurements,
-transactions, verification commands, and remaining hosting work. No frontend files
-were changed as part of Phase 9.
+transactions, verification commands, and remaining presentation work. No frontend
+files were changed as part of Phase 9.
